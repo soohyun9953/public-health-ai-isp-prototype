@@ -1,4 +1,5 @@
 import { Activity, Sparkles } from "lucide-react";
+import packageJson from "../package.json";
 
 export function Header() {
   return (
@@ -17,8 +18,11 @@ export function Header() {
             <Activity className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-[17px] font-bold leading-tight tracking-tight sm:text-lg">
+            <h1 className="flex items-center gap-2 text-[17px] font-bold leading-tight tracking-tight sm:text-lg">
               필수의료 취약지 AI 진단 플랫폼
+              <span className="rounded-md bg-secondary px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-muted-foreground">
+                v{packageJson.version}
+              </span>
             </h1>
             <p className="text-[12.5px] leading-snug text-muted-foreground">
               국립중앙의료원 공공보건의료지원센터 · 응급·분만·소아 3대 취약지 진단 &amp; GIS 시각화 &amp; 사업계획서 자동
