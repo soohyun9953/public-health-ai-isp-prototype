@@ -182,16 +182,21 @@ export function RegionDetailPanel() {
 
       <CardContent className="flex flex-col gap-4">
         {sections.map((section) => (
-          <div key={section.title} className="flex flex-col gap-2 rounded-md border border-border p-3">
+          <div
+            key={section.title}
+            className={`flex flex-col gap-2.5 rounded-lg border p-3.5 transition-colors ${
+              section.isVulnerable ? "border-red-200 bg-red-50/40" : "border-border/60 bg-secondary/20"
+            }`}
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold">{section.title}</span>
+              <span className="text-[13px] font-semibold tracking-tight">{section.title}</span>
               {section.isVulnerable ? (
-                <span className="flex items-center gap-1 text-[11px] font-medium text-red-600">
+                <span className="flex items-center gap-1 rounded-md bg-red-100 px-1.5 py-0.5 text-[11px] font-medium text-red-700">
                   <AlertCircle className="h-3.5 w-3.5" />
                   취약
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-[11px] font-medium text-green-600">
+                <span className="flex items-center gap-1 rounded-md bg-green-100 px-1.5 py-0.5 text-[11px] font-medium text-green-700">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   충족
                 </span>

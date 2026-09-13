@@ -196,7 +196,10 @@ export function ComparisonCharts() {
             <p className="mb-2 text-xs font-medium text-muted-foreground">자원지표 비교 (단위가 달라 개별 비교)</p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {RESOURCE_METRIC_DEFS.map((def) => (
-                <div key={def.key} className="rounded-md border border-border p-3 text-xs">
+                <div
+                  key={def.key}
+                  className="rounded-lg border border-border/60 bg-secondary/20 p-3.5 text-xs transition-colors hover:border-primary/30"
+                >
                   <p className="mb-1.5 font-medium text-foreground">{def.label}</p>
                   <div className="flex flex-col gap-0.5 text-muted-foreground">
                     <span>

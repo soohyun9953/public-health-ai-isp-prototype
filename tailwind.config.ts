@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   darkMode: ["class"],
@@ -16,6 +17,9 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-pretendard)", ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -47,10 +51,10 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         vulnerability: {
-          safe: "#4ade80",
-          caution: "#fde047",
-          vulnerable: "#fb923c",
-          critical: "#dc2626",
+          safe: "#2fa66d",
+          caution: "#e0ab19",
+          vulnerable: "#e8792f",
+          critical: "#c8383a",
         },
       },
       borderRadius: {

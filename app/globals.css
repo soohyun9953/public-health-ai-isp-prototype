@@ -4,32 +4,32 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 220 18% 97%;
+    --foreground: 222 42% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222 42% 13%;
 
-    --primary: 206 100% 37%;
+    --primary: 206 88% 36%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 94%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 212 22% 94%;
+    --secondary-foreground: 222 32% 20%;
 
-    --muted: 210 40% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 212 20% 95%;
+    --muted-foreground: 215 15% 42%;
 
-    --accent: 206 100% 94%;
-    --accent-foreground: 206 100% 25%;
+    --accent: 206 72% 95%;
+    --accent-foreground: 206 88% 28%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 3 72% 51%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 89%;
-    --input: 214 32% 89%;
-    --ring: 206 100% 37%;
+    --border: 214 20% 89%;
+    --input: 214 20% 89%;
+    --ring: 206 88% 36%;
 
-    --radius: 0.6rem;
+    --radius: 0.85rem;
   }
 }
 
@@ -37,9 +37,46 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.011em;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+  ::selection {
+    background-color: hsl(var(--primary) / 0.16);
+    color: hsl(var(--primary));
+  }
+}
+
+@layer utilities {
+  .shadow-soft {
+    box-shadow:
+      0 1px 2px 0 rgb(15 42 68 / 0.04),
+      0 1px 3px 0 rgb(15 42 68 / 0.05);
+  }
+  .shadow-elevated {
+    box-shadow:
+      0 12px 28px -12px rgb(9 40 79 / 0.18),
+      0 4px 10px -6px rgb(9 40 79 / 0.1);
+  }
+  .shadow-glow-primary {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.12),
+      0 10px 30px -10px hsl(var(--primary) / 0.35);
+  }
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
   }
 }
 
@@ -51,6 +88,6 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: hsl(214 32% 80%);
+  background-color: hsl(214 20% 80%);
   border-radius: 999px;
 }

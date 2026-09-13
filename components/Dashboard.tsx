@@ -15,13 +15,17 @@ import { Map } from "lucide-react";
 export function Dashboard() {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-background">
+      <div className="relative min-h-screen bg-background">
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(70%_50%_at_50%_-10%,hsl(var(--primary)/0.06),transparent)]"
+        />
         <Header />
-        <main className="container flex flex-col gap-4 py-5">
+        <main className="container flex flex-col gap-5 py-6 sm:py-8">
           <FileUploadPanel />
           <KpiSummary />
 
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
             <Card className="xl:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -53,9 +57,9 @@ export function Dashboard() {
             </TabsContent>
           </Tabs>
 
-          <footer className="py-4 text-center text-[11px] text-muted-foreground">
-            본 플랫폼의 진단 수치는 업로드된 데이터 또는 국립중앙의료원 「2024 지역별 공공보건의료 통계」를 기반으로 클라이언트에서 즉시 계산되며,
-            외부 서버로 전송되지 않습니다.
+          <footer className="border-t border-border/70 py-5 text-center text-[11px] leading-relaxed text-muted-foreground">
+            본 플랫폼의 진단 수치는 업로드된 데이터 또는 국립중앙의료원 「2024 지역별 공공보건의료 통계」를 기반으로
+            클라이언트에서 즉시 계산되며, 외부 서버로 전송되지 않습니다.
           </footer>
         </main>
       </div>

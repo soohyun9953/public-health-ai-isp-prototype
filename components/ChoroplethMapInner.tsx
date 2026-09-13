@@ -221,7 +221,7 @@ export default function ChoroplethMapInner() {
     <div className="relative w-full select-none">
       <div
         ref={containerRef}
-        className={`relative overflow-hidden rounded-md border border-border/60 ${
+        className={`relative overflow-hidden rounded-xl border border-border/60 bg-[radial-gradient(120%_100%_at_50%_0%,#eef4f9,#e4ecf3)] ${
           isPanning ? "cursor-grabbing" : "cursor-grab"
         }`}
         onPointerDown={handlePointerDown}
@@ -247,10 +247,10 @@ export default function ChoroplethMapInner() {
                   key={p.code}
                   d={p.d}
                   fill={fill}
-                  stroke={isSelected ? "#0f172a" : "#ffffff"}
-                  strokeWidth={isSelected ? 1.6 : 0.5}
+                  stroke={isSelected ? "#0a3a5c" : "#ffffff"}
+                  strokeWidth={isSelected ? 2 : 0.6}
                   vectorEffect="non-scaling-stroke"
-                  className="cursor-pointer transition-[opacity,stroke] duration-150 hover:opacity-80"
+                  className="cursor-pointer transition-[filter,stroke-width] duration-150 hover:brightness-[0.9] hover:saturate-[1.15]"
                   onMouseMove={(e) => handleMouseMove(e, p.code, p.name)}
                   onMouseLeave={() => setTooltip(null)}
                   onClick={() => handlePathClick(p.code)}
@@ -262,11 +262,11 @@ export default function ChoroplethMapInner() {
           </g>
         </svg>
 
-        <div className="absolute right-2 top-2 flex flex-col gap-1 rounded-md border border-border bg-white/90 p-1 shadow-sm">
+        <div className="absolute right-3 top-3 flex flex-col gap-0.5 rounded-lg border border-white/60 bg-white/70 p-1 shadow-elevated backdrop-blur-md">
           <button
             type="button"
             onClick={zoomButton(1.4)}
-            className="flex h-7 w-7 items-center justify-center rounded hover:bg-secondary"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-foreground/80 transition-all duration-150 hover:bg-primary hover:text-primary-foreground active:scale-90"
             aria-label="확대"
           >
             <ZoomIn className="h-4 w-4" />
@@ -274,15 +274,16 @@ export default function ChoroplethMapInner() {
           <button
             type="button"
             onClick={zoomButton(1 / 1.4)}
-            className="flex h-7 w-7 items-center justify-center rounded hover:bg-secondary"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-foreground/80 transition-all duration-150 hover:bg-primary hover:text-primary-foreground active:scale-90"
             aria-label="축소"
           >
             <ZoomOut className="h-4 w-4" />
           </button>
+          <div className="mx-auto h-px w-5 bg-border" />
           <button
             type="button"
             onClick={resetZoom}
-            className="flex h-7 w-7 items-center justify-center rounded hover:bg-secondary"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-foreground/80 transition-all duration-150 hover:bg-primary hover:text-primary-foreground active:scale-90"
             aria-label="원래 크기로"
           >
             <Maximize className="h-4 w-4" />
@@ -290,7 +291,7 @@ export default function ChoroplethMapInner() {
         </div>
 
         {transform.k > 1.01 && (
-          <div className="absolute bottom-2 right-2 rounded bg-white/90 px-2 py-0.5 text-[11px] text-muted-foreground shadow-sm">
+          <div className="absolute bottom-3 right-3 rounded-md border border-white/60 bg-white/70 px-2 py-1 text-[11px] font-medium tabular-nums text-foreground/80 shadow-soft backdrop-blur-md">
             {Math.round(transform.k * 100)}%
           </div>
         )}
@@ -298,7 +299,7 @@ export default function ChoroplethMapInner() {
 
       {tooltip && (
         <div
-          className="pointer-events-none absolute z-10 min-w-[160px] -translate-x-1/2 -translate-y-full rounded-md border border-border bg-white/95 px-3 py-2 text-xs shadow-lg"
+          className="pointer-events-none absolute z-10 min-w-[170px] -translate-x-1/2 -translate-y-full rounded-lg border border-white/60 bg-white/95 px-3 py-2.5 text-xs shadow-elevated backdrop-blur-sm"
           style={{ left: tooltip.x, top: tooltip.y - 8 }}
         >
           <div className="mb-1 flex items-center gap-1 font-semibold">

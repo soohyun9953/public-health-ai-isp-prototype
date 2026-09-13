@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FileUp, Download, Database, AlertTriangle, CheckCircle2, X } from "lucide-react";
+import { FileUp, Download, Database, AlertTriangle, CheckCircle2, FileText, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/lib/app-context";
@@ -80,11 +80,19 @@ export function FileUploadPanel() {
           onDragLeave={() => setIsDragging(false)}
           onDrop={onDrop}
           onClick={() => inputRef.current?.click()}
-          className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
-            isDragging ? "border-primary bg-accent" : "border-border bg-secondary/40 hover:bg-secondary/60"
+          className={`group flex cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed p-7 text-center transition-all duration-200 ${
+            isDragging
+              ? "scale-[1.01] border-primary bg-accent"
+              : "border-border bg-secondary/30 hover:border-primary/40 hover:bg-accent/40"
           }`}
         >
-          <FileUp className="h-6 w-6 text-muted-foreground" />
+          <div
+            className={`flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary shadow-soft transition-transform duration-200 group-hover:scale-110 ${
+              isProcessing ? "animate-pulse" : ""
+            }`}
+          >
+            <FileUp className="h-5 w-5" />
+          </div>
           <p className="text-sm font-medium">
             {isProcessing ? "파일 분석 중..." : "파일을 드래그하거나 클릭하여 업로드"}
           </p>
@@ -103,11 +111,14 @@ export function FileUploadPanel() {
         </div>
 
         {fileName && !isBuiltInDataset && (
-          <div className="flex items-center justify-between rounded-md bg-secondary px-3 py-2 text-xs">
-            <span className="truncate">📄 {fileName}</span>
+          <div className="flex items-center justify-between rounded-md border border-border/60 bg-secondary/50 px-3 py-2 text-xs">
+            <span className="flex items-center gap-1.5 truncate">
+              <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              {fileName}
+            </span>
             <button
               onClick={clearData}
-              className="ml-2 shrink-0 rounded p-0.5 hover:bg-muted-foreground/10"
+              className="ml-2 shrink-0 rounded p-0.5 transition-colors hover:bg-muted-foreground/10"
               aria-label="업로드 초기화"
             >
               <X className="h-3.5 w-3.5" />
@@ -116,7 +127,7 @@ export function FileUploadPanel() {
         )}
 
         {successCount !== null && (
-          <div className="flex items-center gap-1.5 rounded-md bg-green-50 px-3 py-2 text-xs text-green-700">
+          <div className="flex items-center gap-2 rounded-md border-l-2 border-green-500 bg-green-50 px-3 py-2 text-xs text-green-700">
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
             {successCount}개 시·군·구 데이터가 정상 반영되었습니다.
           </div>
@@ -125,14 +136,14 @@ export function FileUploadPanel() {
         {warnings.map((w, i) => (
           <div
             key={i}
-            className="flex items-start gap-1.5 rounded-md bg-yellow-50 px-3 py-2 text-xs text-yellow-800"
+            className="flex items-start gap-2 rounded-md border-l-2 border-yellow-500 bg-yellow-50 px-3 py-2 text-xs text-yellow-800"
           >
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>{w}</span>
           </div>
         ))}
 
-        <div className="flex flex-col gap-2 border-t border-border pt-3 sm:flex-row">
+        <div className="flex flex-col gap-2 border-t border-border/70 pt-3 sm:flex-row">
           <Button variant="outline" size="sm" className="flex-1" onClick={downloadCsvTemplate}>
             <Download className="h-3.5 w-3.5" />
             표준 템플릿 다운로드

@@ -51,7 +51,7 @@ export function NarrativeGenerator() {
         </Button>
       </CardHeader>
       <CardContent>
-        <pre className="whitespace-pre-wrap rounded-md border border-border bg-secondary/40 p-4 font-sans text-sm leading-relaxed">
+        <pre className="whitespace-pre-wrap rounded-lg border border-border/60 bg-secondary/30 p-5 font-sans text-[13.5px] leading-relaxed">
           {narrative}
         </pre>
       </CardContent>
