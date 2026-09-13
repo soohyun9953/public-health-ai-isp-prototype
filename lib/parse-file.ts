@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import { findRegionByNameOrCode } from "./region-data";
-import type { ColumnMappingResult, RegionRawInput } from "./types";
+import type { ColumnMappingResult, IndicatorKey, RegionRawInput } from "./types";
 
 type FieldKey =
   | "sidoCode"
@@ -9,36 +9,34 @@ type FieldKey =
   | "sigunguCode"
   | "sigunguName"
   | "population"
-  | "emergencyUncovered60"
-  | "emergencyRI"
-  | "deliveryUncovered60"
-  | "deliveryInfraIndex"
-  | "pediatricAccessIndex"
-  | "pediatricBedRatio";
+  | IndicatorKey;
 
 // 우선순위가 높은(더 구체적인) 필드부터 매칭을 시도해 컬럼명 충돌을 방지한다.
-const FIELD_KEYWORDS: { field: FieldKey; keywords: string[] }[] = [
-  { field: "pediatricBedRatio", keywords: ["병상", "공급비율", "공급 비율"] },
-  { field: "pediatricAccessIndex", keywords: ["소아", "접근성", "야간"] },
-  { field: "deliveryInfraIndex", keywords: ["분만인프라", "분만 인프라", "인프라지수", "인프라 지수"] },
-  { field: "deliveryUncovered60", keywords: ["분만60분", "분만 60분", "분만실"] },
-  { field: "emergencyRI", keywords: ["RI", "의료이용률", "이용률"] },
-  { field: "emergencyUncovered60", keywords: ["응급60분", "응급 60분", "응급의료", "권역응급"] },
-  { field: "population", keywords: ["인구수", "인구"] },
-  { field: "sigunguCode", keywords: ["시군구코드", "행정코드", "지역코드"] },
-  { field: "sigunguName", keywords: ["시군구명", "시군구", "지역명", "지역"] },
-  { field: "sidoCode", keywords: ["시도코드"] },
-  { field: "sidoName", keywords: ["시도명", "시도", "광역시도"] },
+// 각 항목은 헤더에 모든 키워드가 포함되어야 매칭되는 AND 조건이다.
+const FIELD_KEYWORD_GROUPS: { field: FieldKey; anyOf: string[][] }[] = [
+  { field: "pediatricSpecialistRate", anyOf: [["소아", "전문의"]] },
+  { field: "pediatricRI", anyOf: [["소아", "이용률"], ["소아", "RI"]] },
+  { field: "deliveryFacilityRate", anyOf: [["분만", "기관"]] },
+  { field: "deliveryRI", anyOf: [["분만", "이용률"], ["분만", "RI"]] },
+  { field: "emergencyTransferRate", anyOf: [["전원율"], ["응급", "전원"]] },
+  { field: "emergencyRI", anyOf: [["응급", "이용률"], ["응급", "RI"]] },
+  { field: "population", anyOf: [["인구수"], ["인구"]] },
+  { field: "sigunguCode", anyOf: [["시군구코드"], ["행정코드"], ["지역코드"]] },
+  { field: "sigunguName", anyOf: [["시군구명"], ["시군구"], ["지역명"], ["지역"]] },
+  { field: "sidoCode", anyOf: [["시도코드"]] },
+  { field: "sidoName", anyOf: [["시도명"], ["시도"], ["광역시도"]] },
 ];
 
 function autoMapColumns(headers: string[]): Partial<Record<FieldKey, string>> {
   const mapping: Partial<Record<FieldKey, string>> = {};
   const claimed = new Set<string>();
 
-  for (const { field, keywords } of FIELD_KEYWORDS) {
-    const match = headers.find(
-      (h) => !claimed.has(h) && keywords.some((k) => h.toLowerCase().includes(k.toLowerCase()))
-    );
+  for (const { field, anyOf } of FIELD_KEYWORD_GROUPS) {
+    const match = headers.find((h) => {
+      if (claimed.has(h)) return false;
+      const lower = h.toLowerCase();
+      return anyOf.some((group) => group.every((term) => lower.includes(term.toLowerCase())));
+    });
     if (match) {
       mapping[field] = match;
       claimed.add(match);
@@ -47,15 +45,26 @@ function autoMapColumns(headers: string[]): Partial<Record<FieldKey, string>> {
   return mapping;
 }
 
-function toNumber(value: unknown): number {
-  if (typeof value === "number") return value;
+function toNumberOrNull(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
   if (typeof value === "string") {
-    const cleaned = value.replace(/[,%\s]/g, "");
+    const trimmed = value.trim();
+    if (trimmed === "") return null;
+    const cleaned = trimmed.replace(/[,%\s]/g, "");
     const n = Number(cleaned);
-    return Number.isFinite(n) ? n : 0;
+    return Number.isFinite(n) ? n : null;
   }
-  return 0;
+  return null;
 }
+
+const INDICATOR_FIELDS: IndicatorKey[] = [
+  "emergencyRI",
+  "emergencyTransferRate",
+  "deliveryRI",
+  "deliveryFacilityRate",
+  "pediatricRI",
+  "pediatricSpecialistRate",
+];
 
 function buildRowsFromRecords(records: Record<string, unknown>[]): ColumnMappingResult {
   const warnings: string[] = [];
@@ -89,28 +98,36 @@ function buildRowsFromRecords(records: Record<string, unknown>[]): ColumnMapping
       continue;
     }
 
+    const missingIndicators: IndicatorKey[] = [];
+    const indicatorValues: Record<IndicatorKey, number> = {
+      emergencyRI: 0,
+      emergencyTransferRate: 0,
+      deliveryRI: 0,
+      deliveryFacilityRate: 0,
+      pediatricRI: 0,
+      pediatricSpecialistRate: 0,
+    };
+    for (const key of INDICATOR_FIELDS) {
+      const column = mapping[key];
+      const value = column ? toNumberOrNull(record[column]) : null;
+      if (value === null) {
+        missingIndicators.push(key);
+        indicatorValues[key] = 0;
+      } else {
+        indicatorValues[key] = value;
+      }
+    }
+
+    const populationValue = mapping.population ? toNumberOrNull(record[mapping.population]) : null;
+
     rows.push({
       sidoCode: geo.sidoCode,
       sidoName: geo.sido,
       sigunguCode: geo.code,
       sigunguName: geo.name,
-      population: mapping.population ? toNumber(record[mapping.population]) : 0,
-      emergencyUncovered60: mapping.emergencyUncovered60
-        ? toNumber(record[mapping.emergencyUncovered60])
-        : 0,
-      emergencyRI: mapping.emergencyRI ? toNumber(record[mapping.emergencyRI]) : 0,
-      deliveryUncovered60: mapping.deliveryUncovered60
-        ? toNumber(record[mapping.deliveryUncovered60])
-        : 0,
-      deliveryInfraIndex: mapping.deliveryInfraIndex
-        ? toNumber(record[mapping.deliveryInfraIndex])
-        : 0,
-      pediatricAccessIndex: mapping.pediatricAccessIndex
-        ? toNumber(record[mapping.pediatricAccessIndex])
-        : 0,
-      pediatricBedRatio: mapping.pediatricBedRatio
-        ? toNumber(record[mapping.pediatricBedRatio])
-        : 0,
+      population: populationValue ?? 0,
+      ...indicatorValues,
+      missingIndicators,
     });
   }
 

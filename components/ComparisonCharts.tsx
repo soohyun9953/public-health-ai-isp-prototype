@@ -29,24 +29,31 @@ const SERIES_COLORS = {
   national: "#94a3b8",
 };
 
+const clamp100 = (n: number) => Math.min(100, Math.max(0, n));
+
 function toVulnerabilityScore(stats: NationalStats) {
   return [
-    { axis: "응급 미도달", value: stats.emergencyUncovered60 },
-    { axis: "응급 이용률 부족", value: 100 - stats.emergencyRI },
-    { axis: "분만 미도달", value: stats.deliveryUncovered60 },
-    { axis: "분만 인프라 부족", value: 100 - stats.deliveryInfraIndex },
-    { axis: "소아 접근성 부족", value: 100 - stats.pediatricAccessIndex },
-    { axis: "소아 병상 부족", value: Math.max(0, 100 - stats.pediatricBedRatio) },
+    { axis: "응급 이용률(RI) 부족", value: clamp100(100 - stats.emergencyRI) },
+    { axis: "응급 전원율 과다", value: clamp100((stats.emergencyTransferRate / 20) * 100) },
+    { axis: "분만 이용률(RI) 부족", value: clamp100(100 - stats.deliveryRI) },
+    { axis: "분만기관 부족", value: clamp100(100 - (stats.deliveryFacilityRate / 3) * 100) },
+    { axis: "소아 이용률(RI) 부족", value: clamp100(100 - stats.pediatricRI) },
+    { axis: "소아전문의 부족", value: clamp100(100 - (stats.pediatricSpecialistRate / 120) * 100) },
   ];
 }
 
-const RAW_METRIC_DEFS: { key: keyof NationalStats; label: string }[] = [
-  { key: "emergencyUncovered60", label: "응급60분미도달(%)" },
-  { key: "emergencyRI", label: "응급이용률RI(%)" },
-  { key: "deliveryUncovered60", label: "분만60분미도달(%)" },
-  { key: "deliveryInfraIndex", label: "분만인프라지수(%)" },
-  { key: "pediatricAccessIndex", label: "소아접근성지수(%)" },
-  { key: "pediatricBedRatio", label: "소아병상공급비율(%)" },
+// 세 RI 지표는 모두 %(0~100) 스케일이라 하나의 막대차트에서 직접 비교 가능하다.
+const RI_METRIC_DEFS: { key: keyof NationalStats; label: string }[] = [
+  { key: "emergencyRI", label: "응급 관내이용률(RI, %)" },
+  { key: "deliveryRI", label: "분만 관내이용률(RI, %)" },
+  { key: "pediatricRI", label: "소아 관내이용률(RI, %)" },
+];
+
+// 단위가 서로 다른 자원지표는 막대차트 대신 개별 카드로 비교한다.
+const RESOURCE_METRIC_DEFS: { key: keyof NationalStats; label: string; unit: string; digits: number }[] = [
+  { key: "emergencyTransferRate", label: "중증응급환자 전원율", unit: "%", digits: 1 },
+  { key: "deliveryFacilityRate", label: "분만가능기관 수", unit: "개소/출생아천명", digits: 2 },
+  { key: "pediatricSpecialistRate", label: "소아청소년과 전문의 수", unit: "명/소아10만명", digits: 1 },
 ];
 
 export function ComparisonCharts() {
@@ -82,12 +89,12 @@ export function ComparisonCharts() {
 
   const regionStats: NationalStats = {
     population: selectedRegion.population,
-    emergencyUncovered60: selectedRegion.emergencyUncovered60,
     emergencyRI: selectedRegion.emergencyRI,
-    deliveryUncovered60: selectedRegion.deliveryUncovered60,
-    deliveryInfraIndex: selectedRegion.deliveryInfraIndex,
-    pediatricAccessIndex: selectedRegion.pediatricAccessIndex,
-    pediatricBedRatio: selectedRegion.pediatricBedRatio,
+    emergencyTransferRate: selectedRegion.emergencyTransferRate,
+    deliveryRI: selectedRegion.deliveryRI,
+    deliveryFacilityRate: selectedRegion.deliveryFacilityRate,
+    pediatricRI: selectedRegion.pediatricRI,
+    pediatricSpecialistRate: selectedRegion.pediatricSpecialistRate,
   };
   const sidoStats = computeSidoStats(regions, selectedRegion.sidoName);
   const nationalStats = computeNationalStats(regions);
@@ -103,7 +110,7 @@ export function ComparisonCharts() {
     "전국 평균": Number(nationalScore[i].value.toFixed(1)),
   }));
 
-  const barData = RAW_METRIC_DEFS.map((def) => ({
+  const barData = RI_METRIC_DEFS.map((def) => ({
     metric: def.label,
     [selectedRegion.sigunguName]: Number(regionStats[def.key].toFixed(1)),
     [`${selectedRegion.sidoName} 평균`]: Number(sidoStats[def.key].toFixed(1)),
@@ -183,6 +190,34 @@ export function ComparisonCharts() {
                 <Bar dataKey="전국 평균" fill={SERIES_COLORS.national} radius={[0, 3, 3, 0]} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+
+          <div>
+            <p className="mb-2 text-xs font-medium text-muted-foreground">자원지표 비교 (단위가 달라 개별 비교)</p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {RESOURCE_METRIC_DEFS.map((def) => (
+                <div key={def.key} className="rounded-md border border-border p-3 text-xs">
+                  <p className="mb-1.5 font-medium text-foreground">{def.label}</p>
+                  <div className="flex flex-col gap-0.5 text-muted-foreground">
+                    <span>
+                      {regionKey}:{" "}
+                      <span className="font-semibold text-foreground">
+                        {regionStats[def.key].toFixed(def.digits)}
+                        {def.unit}
+                      </span>
+                    </span>
+                    <span>
+                      {sidoKey}: {sidoStats[def.key].toFixed(def.digits)}
+                      {def.unit}
+                    </span>
+                    <span>
+                      전국 평균: {nationalStats[def.key].toFixed(def.digits)}
+                      {def.unit}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>

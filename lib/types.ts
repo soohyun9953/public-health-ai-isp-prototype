@@ -1,6 +1,15 @@
 // 필수의료 취약지 진단 플랫폼 - 핵심 도메인 타입 정의
+// 지표 체계: 국립중앙의료원 「2024 지역별 공공보건의료 통계」 실측 지표 기준
 
 export type VulnerabilityGrade = "safe" | "caution" | "vulnerable" | "critical";
+
+export type IndicatorKey =
+  | "emergencyRI"
+  | "emergencyTransferRate"
+  | "deliveryRI"
+  | "deliveryFacilityRate"
+  | "pediatricRI"
+  | "pediatricSpecialistRate";
 
 export interface RegionRawInput {
   sidoCode: string;
@@ -8,18 +17,20 @@ export interface RegionRawInput {
   sigunguCode: string;
   sigunguName: string;
   population: number;
-  /** 권역응급의료센터 60분 내 미도달 인구 비율 (%) */
-  emergencyUncovered60: number;
-  /** 관내 중증응급환자 의료이용률 RI (%) */
+  /** 중증응급환자 응급의료서비스 관내의료이용률 RI (%, 2024) */
   emergencyRI: number;
-  /** 분만실(산부인과) 60분 내 미도달 인구 비율 (%) */
-  deliveryUncovered60: number;
-  /** 가임기 여성 인구 대비 분만 인프라 지수 (%) */
-  deliveryInfraIndex: number;
-  /** 소아청소년과 야간·휴일 진료 접근성 지수 (%, 시도 평균 대비) */
-  pediatricAccessIndex: number;
-  /** 기준 병상 대비 소아 병상 공급 비율 (%) */
-  pediatricBedRatio: number;
+  /** 중증응급환자 전원율 (%, 2024) */
+  emergencyTransferRate: number;
+  /** 분만 입원서비스 관내의료이용률 RI (%, 2024) */
+  deliveryRI: number;
+  /** 분만가능기관 수 (개소, 출생아 1천명당, 2024) */
+  deliveryFacilityRate: number;
+  /** 소아청소년입원 관내의료이용률 RI (%, 2024) */
+  pediatricRI: number;
+  /** 소아청소년과 전문의 수 (명, 만19세미만인구 10만명당, 2024) */
+  pediatricSpecialistRate: number;
+  /** 실적 부족 등으로 통계 산출이 불가능했던 지표 목록 (해당 지표는 0으로 대체되어 있음) */
+  missingIndicators: IndicatorKey[];
 }
 
 export interface RegionAnalysis extends RegionRawInput {
@@ -32,12 +43,12 @@ export interface RegionAnalysis extends RegionRawInput {
 
 export interface NationalStats {
   population: number;
-  emergencyUncovered60: number;
   emergencyRI: number;
-  deliveryUncovered60: number;
-  deliveryInfraIndex: number;
-  pediatricAccessIndex: number;
-  pediatricBedRatio: number;
+  emergencyTransferRate: number;
+  deliveryRI: number;
+  deliveryFacilityRate: number;
+  pediatricRI: number;
+  pediatricSpecialistRate: number;
 }
 
 export interface RegionGeoMeta {

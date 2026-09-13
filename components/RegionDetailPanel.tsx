@@ -13,37 +13,36 @@ import {
 } from "@/components/ui/select";
 import { useAppContext } from "@/lib/app-context";
 import { GRADE_META, THRESHOLDS } from "@/lib/vulnerability-logic";
-import { formatNumber, formatPercent } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 
 function MetricRow({
   label,
-  value,
-  unit,
+  displayValue,
+  barPct,
   thresholdLabel,
   isBad,
-  invert,
+  isMissing,
 }: {
   label: string;
-  value: number;
-  unit: string;
+  displayValue: string;
+  barPct: number;
   thresholdLabel: string;
   isBad: boolean;
-  invert?: boolean;
+  isMissing?: boolean;
 }) {
-  const pct = Math.min(100, Math.max(0, value));
+  const pct = Math.min(100, Math.max(0, barPct));
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
         <span className={`font-semibold ${isBad ? "text-red-600" : "text-foreground"}`}>
-          {formatPercent(value)}
-          {unit}
+          {isMissing ? "실적 없음" : displayValue}
         </span>
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
         <div
           className={`h-full rounded-full ${isBad ? "bg-red-500" : "bg-primary"}`}
-          style={{ width: `${invert ? 100 - pct : pct}%` }}
+          style={{ width: `${pct}%` }}
         />
       </div>
       <span className="text-[10px] text-muted-foreground">{thresholdLabel}</span>
@@ -59,7 +58,7 @@ export function RegionDetailPanel() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">지역 상세 진단</CardTitle>
-          <CardDescription>데이터를 업로드하거나 샘플 데이터를 불러오면 표시됩니다.</CardDescription>
+          <CardDescription>데이터를 업로드하거나 2024 실측 데이터를 불러오면 표시됩니다.</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -77,6 +76,8 @@ export function RegionDetailPanel() {
   }
 
   const grade = GRADE_META[selectedRegion.grade];
+  const isMissing = (key: (typeof selectedRegion)["missingIndicators"][number]) =>
+    selectedRegion.missingIndicators.includes(key);
 
   const sections = [
     {
@@ -84,19 +85,20 @@ export function RegionDetailPanel() {
       isVulnerable: selectedRegion.isEmergencyVulnerable,
       metrics: [
         {
-          label: "권역응급센터 60분 미도달 인구 비율",
-          value: selectedRegion.emergencyUncovered60,
-          unit: "",
-          thresholdLabel: `기준: 30% 초과 시 취약`,
-          isBad: selectedRegion.emergencyUncovered60 > THRESHOLDS.emergency.uncovered60,
+          label: "응급의료서비스 관내의료이용률(RI)",
+          displayValue: `${selectedRegion.emergencyRI.toFixed(1)}%`,
+          barPct: selectedRegion.emergencyRI,
+          thresholdLabel: "기준: 30% 미만 시 취약",
+          isBad: selectedRegion.emergencyRI < THRESHOLDS.emergency.ri,
+          isMissing: isMissing("emergencyRI"),
         },
         {
-          label: "중증응급환자 의료이용률(RI)",
-          value: selectedRegion.emergencyRI,
-          unit: "",
-          thresholdLabel: `기준: 30% 미만 시 취약`,
-          isBad: selectedRegion.emergencyRI < THRESHOLDS.emergency.ri,
-          invert: true,
+          label: "중증응급환자 전원율",
+          displayValue: `${selectedRegion.emergencyTransferRate.toFixed(1)}%`,
+          barPct: (selectedRegion.emergencyTransferRate / 20) * 100,
+          thresholdLabel: "기준: 5% 초과 시 취약",
+          isBad: selectedRegion.emergencyTransferRate > THRESHOLDS.emergency.transferRate,
+          isMissing: isMissing("emergencyTransferRate"),
         },
       ],
     },
@@ -105,19 +107,20 @@ export function RegionDetailPanel() {
       isVulnerable: selectedRegion.isDeliveryVulnerable,
       metrics: [
         {
-          label: "분만실 60분 미도달 인구 비율",
-          value: selectedRegion.deliveryUncovered60,
-          unit: "",
-          thresholdLabel: `기준: 30% 초과 시 취약`,
-          isBad: selectedRegion.deliveryUncovered60 > THRESHOLDS.delivery.uncovered60,
+          label: "분만 입원서비스 관내의료이용률(RI)",
+          displayValue: `${selectedRegion.deliveryRI.toFixed(1)}%`,
+          barPct: selectedRegion.deliveryRI,
+          thresholdLabel: "기준: 30% 미만 시 취약",
+          isBad: selectedRegion.deliveryRI < THRESHOLDS.delivery.ri,
+          isMissing: isMissing("deliveryRI"),
         },
         {
-          label: "가임기 여성 대비 분만 인프라 지수",
-          value: selectedRegion.deliveryInfraIndex,
-          unit: "",
-          thresholdLabel: `기준: 40% 미만 시 취약`,
-          isBad: selectedRegion.deliveryInfraIndex < THRESHOLDS.delivery.infraIndex,
-          invert: true,
+          label: "분만가능기관 수 (출생아 1천명당)",
+          displayValue: `${selectedRegion.deliveryFacilityRate.toFixed(2)}개소`,
+          barPct: (selectedRegion.deliveryFacilityRate / 3) * 100,
+          thresholdLabel: "기준: 1.0개소 미만 시 취약",
+          isBad: selectedRegion.deliveryFacilityRate < THRESHOLDS.delivery.facilityRate,
+          isMissing: isMissing("deliveryFacilityRate"),
         },
       ],
     },
@@ -126,20 +129,20 @@ export function RegionDetailPanel() {
       isVulnerable: selectedRegion.isPediatricVulnerable,
       metrics: [
         {
-          label: "소아 야간·휴일 진료 접근성 지수",
-          value: selectedRegion.pediatricAccessIndex,
-          unit: "",
-          thresholdLabel: "참고 지표 (판정 미반영)",
-          isBad: false,
-          invert: true,
+          label: "소아청소년입원 관내의료이용률(RI)",
+          displayValue: `${selectedRegion.pediatricRI.toFixed(1)}%`,
+          barPct: selectedRegion.pediatricRI,
+          thresholdLabel: "기준: 30% 미만 시 취약",
+          isBad: selectedRegion.pediatricRI < THRESHOLDS.pediatric.ri,
+          isMissing: isMissing("pediatricRI"),
         },
         {
-          label: "기준 병상 대비 소아 병상 공급 비율",
-          value: selectedRegion.pediatricBedRatio,
-          unit: "",
-          thresholdLabel: `기준: 60% 미만 시 취약`,
-          isBad: selectedRegion.pediatricBedRatio < THRESHOLDS.pediatric.bedRatio,
-          invert: true,
+          label: "소아청소년과 전문의 수 (소아인구 10만명당)",
+          displayValue: `${selectedRegion.pediatricSpecialistRate.toFixed(1)}명`,
+          barPct: (selectedRegion.pediatricSpecialistRate / 120) * 100,
+          thresholdLabel: "기준: 40명 미만 시 취약",
+          isBad: selectedRegion.pediatricSpecialistRate < THRESHOLDS.pediatric.specialistRate,
+          isMissing: isMissing("pediatricSpecialistRate"),
         },
       ],
     },

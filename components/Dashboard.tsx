@@ -54,7 +54,7 @@ export function Dashboard() {
           </Tabs>
 
           <footer className="py-4 text-center text-[11px] text-muted-foreground">
-            본 플랫폼의 진단 수치는 업로드된 데이터 또는 시연용 샘플 데이터를 기반으로 클라이언트에서 즉시 계산되며,
+            본 플랫폼의 진단 수치는 업로드된 데이터 또는 국립중앙의료원 「2024 지역별 공공보건의료 통계」를 기반으로 클라이언트에서 즉시 계산되며,
             외부 서버로 전송되지 않습니다.
           </footer>
         </main>
