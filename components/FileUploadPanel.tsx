@@ -68,7 +68,8 @@ export function FileUploadPanel() {
           데이터 업로드
         </CardTitle>
         <CardDescription>
-          시·군·구별 필수의료 지표 CSV/XLSX 파일을 업로드하면 취약지 진단이 자동 실행됩니다.
+          표준 템플릿 또는 국립중앙의료원 「지역별 공공보건의료 통계」 원본 파일(xlsx)을 업로드하면
+          취약지 진단이 자동 실행됩니다.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">

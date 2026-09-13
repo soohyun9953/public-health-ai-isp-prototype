@@ -13,9 +13,9 @@
     "pediatricSpecialistRate": 464.1044234952864
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26010",
+    "sidoCode": "11",
+    "sidoName": "서울특별시",
+    "sigunguCode": "11020",
     "sigunguName": "중구",
     "population": 120544,
     "emergencyRI": 25.84269662921348,
@@ -195,9 +195,9 @@
     "pediatricSpecialistRate": 72.16959855660804
   },
   {
-    "sidoCode": "21",
-    "sidoName": "부산광역시",
-    "sigunguCode": "21120",
+    "sidoCode": "11",
+    "sidoName": "서울특별시",
+    "sigunguCode": "11160",
     "sigunguName": "강서구",
     "population": 556171,
     "emergencyRI": 51.87938868236266,
@@ -325,9 +325,9 @@
     "pediatricSpecialistRate": 109.8209186885918
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26010",
+    "sidoCode": "21",
+    "sidoName": "부산광역시",
+    "sigunguCode": "21010",
     "sigunguName": "중구",
     "population": 37537,
     "emergencyRI": null,
@@ -338,9 +338,9 @@
     "pediatricSpecialistRate": 479.1566842357451
   },
   {
-    "sidoCode": "25",
-    "sidoName": "대전광역시",
-    "sigunguCode": "25030",
+    "sidoCode": "21",
+    "sidoName": "부산광역시",
+    "sigunguCode": "21020",
     "sigunguName": "서구",
     "population": 103188,
     "emergencyRI": 80.41310541310541,
@@ -351,9 +351,9 @@
     "pediatricSpecialistRate": 297.5083674228338
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26030",
+    "sidoCode": "21",
+    "sidoName": "부산광역시",
+    "sigunguCode": "21030",
     "sigunguName": "동구",
     "population": 85911,
     "emergencyRI": null,
@@ -403,9 +403,9 @@
     "pediatricSpecialistRate": 95.229025807066
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26020",
+    "sidoCode": "21",
+    "sidoName": "부산광역시",
+    "sigunguCode": "21070",
     "sigunguName": "남구",
     "population": 254498,
     "emergencyRI": null,
@@ -416,9 +416,9 @@
     "pediatricSpecialistRate": 54.58515283842794
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26040",
+    "sidoCode": "21",
+    "sidoName": "부산광역시",
+    "sigunguCode": "21080",
     "sigunguName": "북구",
     "population": 267692,
     "emergencyRI": null,
@@ -533,9 +533,9 @@
     "pediatricSpecialistRate": 47.06768332862656
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26010",
+    "sidoCode": "22",
+    "sidoName": "대구광역시",
+    "sigunguCode": "22010",
     "sigunguName": "중구",
     "population": 97711,
     "emergencyRI": 37.6530612244898,
@@ -546,9 +546,9 @@
     "pediatricSpecialistRate": 377.5959723096287
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26030",
+    "sidoCode": "22",
+    "sidoName": "대구광역시",
+    "sigunguCode": "22020",
     "sigunguName": "동구",
     "population": 342339,
     "emergencyRI": 46.57802111849824,
@@ -559,9 +559,9 @@
     "pediatricSpecialistRate": 68.05653229282457
   },
   {
-    "sidoCode": "25",
-    "sidoName": "대전광역시",
-    "sigunguCode": "25030",
+    "sidoCode": "22",
+    "sidoName": "대구광역시",
+    "sigunguCode": "22030",
     "sigunguName": "서구",
     "population": 163135,
     "emergencyRI": null,
@@ -572,9 +572,9 @@
     "pediatricSpecialistRate": 58.7045854803992
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26020",
+    "sidoCode": "22",
+    "sidoName": "대구광역시",
+    "sigunguCode": "22040",
     "sigunguName": "남구",
     "population": 136263,
     "emergencyRI": 59.77443609022557,
@@ -585,9 +585,9 @@
     "pediatricSpecialistRate": 169.4231544977814
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26040",
+    "sidoCode": "22",
+    "sidoName": "대구광역시",
+    "sigunguCode": "22050",
     "sigunguName": "북구",
     "population": 413010,
     "emergencyRI": 32.22156045265039,
@@ -650,9 +650,9 @@
     "pediatricSpecialistRate": 80.1924619085806
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26010",
+    "sidoCode": "23",
+    "sidoName": "인천광역시",
+    "sigunguCode": "23010",
     "sigunguName": "중구",
     "population": 167113,
     "emergencyRI": 72.54374158815612,
@@ -663,9 +663,9 @@
     "pediatricSpecialistRate": 56.89576695493855
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26030",
+    "sidoCode": "23",
+    "sidoName": "인천광역시",
+    "sigunguCode": "23020",
     "sigunguName": "동구",
     "population": 58296,
     "emergencyRI": null,
@@ -676,9 +676,9 @@
     "pediatricSpecialistRate": 76.82851874615857
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26020",
+    "sidoCode": "23",
+    "sidoName": "인천광역시",
+    "sigunguCode": "23030",
     "sigunguName": "남구",
     "population": 412274,
     "emergencyRI": 24.43370582905467,
@@ -741,9 +741,9 @@
     "pediatricSpecialistRate": 57.99932842882871
   },
   {
-    "sidoCode": "25",
-    "sidoName": "대전광역시",
-    "sigunguCode": "25030",
+    "sidoCode": "23",
+    "sidoName": "인천광역시",
+    "sigunguCode": "23080",
     "sigunguName": "서구",
     "population": 634064,
     "emergencyRI": 63.26690550828482,
@@ -780,9 +780,9 @@
     "pediatricSpecialistRate": 142.4501424501425
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26030",
+    "sidoCode": "24",
+    "sidoName": "광주광역시",
+    "sigunguCode": "24010",
     "sigunguName": "동구",
     "population": 106203,
     "emergencyRI": 62.56793478260869,
@@ -793,9 +793,9 @@
     "pediatricSpecialistRate": 175.2208512813025
   },
   {
-    "sidoCode": "25",
-    "sidoName": "대전광역시",
-    "sigunguCode": "25030",
+    "sidoCode": "24",
+    "sidoName": "광주광역시",
+    "sigunguCode": "24020",
     "sigunguName": "서구",
     "population": 279050,
     "emergencyRI": 17.63951250801796,
@@ -806,9 +806,9 @@
     "pediatricSpecialistRate": 130.7737860244769
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26020",
+    "sidoCode": "24",
+    "sidoName": "광주광역시",
+    "sigunguCode": "24030",
     "sigunguName": "남구",
     "population": 207597,
     "emergencyRI": 29.61019490254873,
@@ -819,9 +819,9 @@
     "pediatricSpecialistRate": 78.98200965335674
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26040",
+    "sidoCode": "24",
+    "sidoName": "광주광역시",
+    "sigunguCode": "24040",
     "sigunguName": "북구",
     "population": 423961,
     "emergencyRI": null,
@@ -845,9 +845,9 @@
     "pediatricSpecialistRate": 75.95845762899127
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26030",
+    "sidoCode": "25",
+    "sidoName": "대전광역시",
+    "sigunguCode": "25010",
     "sigunguName": "동구",
     "population": 218513,
     "emergencyRI": null,
@@ -858,9 +858,9 @@
     "pediatricSpecialistRate": 78.73452150883973
   },
   {
-    "sidoCode": "26",
-    "sidoName": "울산광역시",
-    "sigunguCode": "26010",
+    "sidoCode": "25",
+    "sidoName": "대전광역시",
+    "sigunguCode": "25020",
     "sigunguName": "중구",
     "population": 225008,
     "emergencyRI": 74.30025445292621,
@@ -1742,9 +1742,9 @@
     "pediatricSpecialistRate": 48.67364322219518
   },
   {
-    "sidoCode": "38",
-    "sidoName": "경상남도",
-    "sigunguCode": "38340",
+    "sidoCode": "32",
+    "sidoName": "강원특별자치도",
+    "sigunguCode": "32400",
     "sigunguName": "고성군",
     "population": 26999,
     "emergencyRI": null,

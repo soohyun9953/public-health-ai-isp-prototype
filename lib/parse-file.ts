@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
-import { findRegionByNameOrCode } from "./region-data";
+import { AMBIGUOUS_REGION_NAMES, findRegionByNameOrCode, findRegionBySidoAndName } from "./region-data";
+import { isNmcWorkbook, parseNmcWorkbook } from "./parse-nmc-workbook";
 import type { ColumnMappingResult, IndicatorKey, RegionRawInput } from "./types";
 
 type FieldKey =
@@ -84,6 +85,7 @@ function buildRowsFromRecords(records: Record<string, unknown>[]): ColumnMapping
   }
 
   const rows: RegionRawInput[] = [];
+  let ambiguousWithoutSidoCount = 0;
 
   for (const record of records) {
     const rawNameOrCode =
@@ -92,10 +94,22 @@ function buildRowsFromRecords(records: Record<string, unknown>[]): ColumnMapping
 
     if (!rawNameOrCode) continue;
 
-    const geo = findRegionByNameOrCode(rawNameOrCode);
+    const rawSido =
+      (mapping.sidoName ? String(record[mapping.sidoName] ?? "").trim() : "") ||
+      (mapping.sidoCode ? String(record[mapping.sidoCode] ?? "").trim() : "");
+
+    // "중구", "동구"처럼 여러 시·도에 동시에 존재하는 지역명은 시도 정보 없이는
+    // 어느 지역인지 특정할 수 없으므로, 시도 컬럼이 있으면 반드시 함께 사용한다.
+    const geo = rawSido
+      ? findRegionBySidoAndName(rawSido, rawNameOrCode)
+      : findRegionByNameOrCode(rawNameOrCode);
+
     if (!geo) {
-      unmatchedRegionNames.push(rawNameOrCode);
+      unmatchedRegionNames.push(rawSido ? `${rawSido} ${rawNameOrCode}` : rawNameOrCode);
       continue;
+    }
+    if (!rawSido && AMBIGUOUS_REGION_NAMES.has(rawNameOrCode)) {
+      ambiguousWithoutSidoCount += 1;
     }
 
     const missingIndicators: IndicatorKey[] = [];
@@ -136,6 +150,11 @@ function buildRowsFromRecords(records: Record<string, unknown>[]): ColumnMapping
       `${unmatchedRegionNames.length}건의 행정구역명을 전국 시·군·구 목록과 매칭하지 못해 제외했습니다.`
     );
   }
+  if (ambiguousWithoutSidoCount > 0) {
+    warnings.push(
+      `${ambiguousWithoutSidoCount}건은 "중구", "동구"처럼 여러 시·도에 동시에 존재하는 지역명인데 시도명 컬럼이 없어 정확한 지역을 특정하지 못했을 수 있습니다. 표준 템플릿의 '시도명' 컬럼을 함께 입력해 주세요.`
+    );
+  }
 
   return { rows, unmatchedRegionNames, warnings };
 }
@@ -156,6 +175,13 @@ export async function parseUploadedFile(file: File): Promise<ColumnMappingResult
   if (extension === "xlsx" || extension === "xls") {
     const buffer = await file.arrayBuffer();
     const workbook = XLSX.read(buffer, { type: "array" });
+
+    // 국립중앙의료원이 배포하는 원본 통계집(다중 시트 + 병합 헤더)은
+    // 표준 템플릿과 구조가 전혀 달라 전용 파서로 라우팅한다.
+    if (isNmcWorkbook(workbook)) {
+      return parseNmcWorkbook(workbook);
+    }
+
     const firstSheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[firstSheetName];
     const records = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: "" });
